@@ -28,6 +28,8 @@ def round_edges(input_file, output_file, image, corner_radius):
     output = ffmpeg.output(video_audio, output_file, format="mp4")
     output.run()
 
+
+
 def fade_and_merge(first_file, second_file, output_file, fade_out, fade_in):
     if os.path.exists(output_file):
         os.remove(output_file)
@@ -36,7 +38,7 @@ def fade_and_merge(first_file, second_file, output_file, fade_out, fade_in):
     probe_first = ffmpeg.probe(first_file)
     first_duration = float(probe_first.get("format", {}).get("duration", None))
     first_stream = ffmpeg.input(first_file)
-    first_video = first_stream.filter_("fade", t='out', st=first_duration-fade_out, d=3).setpts(pts)
+    first_video = first_stream.filter_("fade", t='out', st=first_duration-fade_out, d=fade_out).setpts(pts)
     first_audio = first_stream.filter_("asetpts", pts)
     second_stream = ffmpeg.input(second_file)
     second_video = second_stream.filter_("fade", t='in', st=0, d=fade_in).setpts(pts)
@@ -46,6 +48,9 @@ def fade_and_merge(first_file, second_file, output_file, fade_out, fade_in):
     video_audio = ffmpeg.concat(video, audio, n=2, v=1, a=1)
     output = ffmpeg.output(video_audio, output_file, format="mp4")
     output.run()
+    
+
+
 
 def modify_audio(input_file, output_file, duration):
     if os.path.exists(output_file):
